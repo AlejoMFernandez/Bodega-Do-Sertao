@@ -1,0 +1,10 @@
+Videos de la web (opcionales). Si un archivo no existe, la web muestra la foto con zoom lento.
+Formato: mp4 (H.264), sin audio, 6-12 s, loop. Ideal < 3 MB cada uno.
+
+hero.mp4       -> Hero: el bule / fachada, o un plato con vapor (horizontal 16:9 o vertical, se recorta)
+almoco.mp4     -> "Agora na Bodega" tarjeta Almoço (buffet, cocina, platos saliendo)
+jantar.mp4     -> "Agora na Bodega" tarjeta Jantar (forró, salón de noche)
+ambientes.mp4  -> Se ve ADENTRO de la silueta del bule (vertical 9:16 ideal)
+forro1.mp4     -> Polaroid 1 (vertical)
+forro2.mp4     -> Polaroid 2 (vertical, sanfona)
+forro3.mp4     -> Polaroid 3 (vertical, zabumba / triângulo)
