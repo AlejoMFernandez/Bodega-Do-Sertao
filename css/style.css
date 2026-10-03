@@ -1,4 +1,7 @@
 /* Bodega do Sertão — demo web */
+@font-face{font-family:'Londrina Solid';font-weight:400;font-display:swap;src:url(../fonts/londrina-solid-400.woff2) format('woff2')}
+@font-face{font-family:'Londrina Solid';font-weight:900;font-display:swap;src:url(../fonts/londrina-solid-900.woff2) format('woff2')}
+@font-face{font-family:'Special Elite';font-weight:400;font-display:swap;src:url(../fonts/special-elite-400.woff2) format('woff2')}
 :root{
   --barro:#B14F36; --sol:#FACC3B; --rapadura:#5E2617; --palha:#F5E7C2; --palha-2:#FFF6DC;
   --fogo:#EB8300; --mandacaru:#357140; --bule:#C5F1BE; --noite:#3A160C;
@@ -381,3 +384,8 @@ section{position:relative}
   .visite__foto{width:110px;height:138px;right:-4px;bottom:-30px}
   .zap{width:56px;height:56px;right:14px;bottom:14px}
 }
+
+/* crédito del desarrollador */
+.credito{position:relative;z-index:2;font-size:12px;letter-spacing:.02em;text-align:center;opacity:.8;margin:36px auto 0;padding:0 16px}
+.credito a{color:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.credito a:hover{opacity:.75}
