@@ -6,9 +6,37 @@
   const ZAP = '5582998310088';
   const brl = v => 'R$ ' + (Number.isInteger(v) ? v : v.toFixed(2).replace('.', ','));
 
+  /* Título del hero: letra por letra (para la entrada) */
+  const h1 = $('.hero__title');
+  if (h1) {
+    let n = 0;
+    h1.innerHTML = h1.innerHTML.split(/<br\s*\/?>/i).map(linea =>
+      `<span class="pal">${[...linea.trim()].map(c => `<span class="ch" style="--i:${n++};--r:${(Math.random() * 50 - 25).toFixed(1)}deg">${c}</span>`).join('')}</span>`
+    ).join('<br>');
+    h1.setAttribute('aria-label', 'Nordestine-se!');
+  }
+  $$('.hero__chips .chip').forEach((c, i) => { c.style.setProperty('--i', i); c.style.setProperty('--r', (i % 2 ? 1 : -1) * (8 + i * 3) + 'deg'); });
+
+  /* Escena de arranque: mínimo 2,3 s, espera la carga (máx. 4 s) */
+  const root = document.documentElement, intro = $('#intro');
+  if (root.classList.contains('arranque') && intro) {
+    const t0 = performance.now();
+    const salir = () => {
+      if (root.classList.contains('ready') && !intro.isConnected) return;
+      root.classList.add('ready');
+      setTimeout(() => { intro.remove(); root.classList.remove('arranque'); }, 1100);
+    };
+    const listo = () => setTimeout(salir, Math.max(0, 2100 - (performance.now() - t0)));
+    if (document.readyState === 'complete') listo(); else addEventListener('load', listo, { once: true });
+    setTimeout(salir, 4000);
+    if (history.scrollRestoration) history.scrollRestoration = 'manual';
+    scrollTo(0, 0);
+  } else if (intro) intro.remove();
+
   /* Topo */
   const topo = $('#topo');
-  const onScroll = () => topo.classList.toggle('is-scrolled', scrollY > 30);
+  const zap = $('.zap');
+  const onScroll = () => { topo.classList.toggle('is-scrolled', scrollY > 30); zap.classList.toggle('is-oculto', scrollY < innerHeight * .55); };
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
   /* Menu hambúrguer */
@@ -118,7 +146,7 @@
   trio();
 
   /* Vinhos */
-  $('#rotulos').innerHTML = VINHOS.map(v => `<article class="rotulo rv"><small>${v.t}</small><b>${v.n}</b><p>${v.d}</p><span class="preco">${brl(v.p)}</span></article>`).join('');
+  $('#rotulos').innerHTML = VINHOS.map((v, i) => `<article class="rotulo rv" style="--i:${i % 4}"><small>${v.t}</small><b>${v.n}</b><p>${v.d}</p><span class="preco">${brl(v.p)}</span></article>`).join('');
 
   /* Bodega FM — carrega o Spotify só ao tocar */
   const fm = $('#fm'), fmBtn = $('#fm-btn');
@@ -144,8 +172,85 @@
   }), { rootMargin: '200px' });
   $$('video[data-src]').forEach(v => vio.observe(v));
 
+  /* Carrosséis: arrastar com o mouse (inércia + encaixe suave) */
+  const arrastar = el => {
+    let ativo = false, movido = false, x0 = 0, s0 = 0, ultX = 0, ultT = 0, vel = 0, raf = 0;
+    const rola = () => el.scrollWidth > el.clientWidth + 4;
+    const alvo = proj => {
+      const r = el.getBoundingClientRect(), pad = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
+      const max = el.scrollWidth - el.clientWidth;
+      let melhor = Math.max(0, Math.min(max, proj)), dist = Infinity;
+      [...el.children].forEach(c => {
+        const cr = c.getBoundingClientRect();
+        const al = getComputedStyle(c).scrollSnapAlign;
+        if (al === 'none') return;
+        const t = al.includes('center') ? el.scrollLeft + cr.left + cr.width / 2 - (r.left + el.clientWidth / 2)
+                                        : el.scrollLeft + cr.left - r.left - pad;
+        const tc = Math.max(0, Math.min(max, t));
+        if (Math.abs(tc - proj) < dist) { dist = Math.abs(tc - proj); melhor = tc; }
+      });
+      return melhor;
+    };
+    const anima = (para, dur = 520) => {
+      cancelAnimationFrame(raf);
+      const de = el.scrollLeft, t0 = performance.now();
+      el.classList.add('is-dragging');
+      const passo = t => {
+        const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.scrollLeft = de + (para - de) * e;
+        if (k < 1) raf = requestAnimationFrame(passo); else el.classList.remove('is-dragging');
+      };
+      raf = requestAnimationFrame(passo);
+    };
+    el.classList.add('is-drag');
+    el.addEventListener('dragstart', e => e.preventDefault());
+    el.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0 || !rola()) return;
+      cancelAnimationFrame(raf);
+      ativo = true; movido = false; x0 = ultX = e.clientX; s0 = el.scrollLeft; ultT = performance.now(); vel = 0;
+    });
+    addEventListener('pointermove', e => {
+      if (!ativo) return;
+      const dx = e.clientX - x0;
+      if (!movido && Math.abs(dx) > 5) { movido = true; el.classList.add('is-dragging'); }
+      if (!movido) return;
+      e.preventDefault();
+      el.scrollLeft = s0 - dx;
+      const t = performance.now(), dt = t - ultT;
+      if (dt > 0) vel = vel * .6 + ((ultX - e.clientX) / dt) * .4;
+      ultX = e.clientX; ultT = t;
+    }, { passive: false });
+    const soltar = () => {
+      if (!ativo) return; ativo = false;
+      if (!movido) return;
+      if (performance.now() - ultT > 90) vel = 0;
+      anima(alvo(el.scrollLeft + vel * 260), 560);
+    };
+    addEventListener('pointerup', soltar); addEventListener('pointercancel', soltar);
+    el.addEventListener('click', e => { if (movido) { e.preventDefault(); e.stopPropagation(); movido = false; } }, true);
+    el.irPara = dir => {
+      const proj = el.scrollLeft + dir * el.clientWidth * .7;
+      anima(alvo(proj), 600);
+    };
+  };
+  $$('.prateleira, .momentos, .galeria, .polaroids, .rotulos, .tabs').forEach(arrastar);
+
+  /* Barra + setas da lojinha */
+  $$('[data-carril]').forEach(c => {
+    if (matchMedia('(pointer: coarse)').matches) $('.carril__dica', c).firstChild.textContent = 'Deslize para ver mais ';
+    const el = $('#' + c.dataset.carril), bar = $('.carril__barra span', c), [ant, prox] = $$('.carril__btn', c);
+    const upd = () => {
+      const max = el.scrollWidth - el.clientWidth, k = max > 0 ? el.scrollLeft / max : 0, w = Math.min(1, el.clientWidth / el.scrollWidth);
+      bar.style.width = w * 100 + '%'; bar.style.transform = `translateX(${k * (1 / w - 1) * 100}%)`;
+      ant.disabled = el.scrollLeft < 4; prox.disabled = el.scrollLeft > max - 4;
+      c.hidden = max <= 4;
+    };
+    ant.addEventListener('click', () => el.irPara(-1)); prox.addEventListener('click', () => el.irPara(1));
+    el.addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); upd();
+  });
+
   /* Revelar ao rolar */
   $$('.sec-head, .momentos, .trio, .bule-window, .ambientes__txt, .galeria, .polaroids, .fm, .visite__info, .visite__mapa').forEach(el => el.classList.add('rv'));
-  const rio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); rio.unobserve(e.target); } }), { threshold: .12 });
+  const rio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const t = e.target; t.classList.add('is-in'); rio.unobserve(t); setTimeout(() => t.classList.add('rv-fim'), 1700); } }), { threshold: .12 });
   $$('.rv').forEach(el => rio.observe(el));
 })();

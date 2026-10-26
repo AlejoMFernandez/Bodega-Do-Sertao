@@ -7,6 +7,7 @@
   --fogo:#EB8300; --mandacaru:#357140; --bule:#C5F1BE; --noite:#3A160C;
   --tit:'Londrina Solid', 'Arial Narrow', sans-serif;
   --txt:'Special Elite', 'Courier New', monospace;
+  --mola:cubic-bezier(.34,1.45,.55,1); --suave:cubic-bezier(.22,1,.36,1);
   --rasg: polygon(0% 10%,4% 0%,12% 7%,21% 1%,31% 6%,42% 0%,55% 7%,66% 2%,78% 8%,88% 1%,100% 6%,98% 50%,100% 92%,90% 100%,79% 94%,67% 100%,54% 93%,41% 100%,30% 94%,18% 100%,7% 93%,0% 100%,2% 50%);
 }
 *{box-sizing:border-box}
@@ -262,11 +263,16 @@ section{position:relative}
 /* Zap */
 .zap{position:fixed;right:20px;bottom:20px;z-index:40;width:60px;height:60px;border-radius:50%;background:var(--mandacaru);display:grid;place-items:center;box-shadow:0 6px 0 var(--rapadura),0 10px 24px rgba(0,0,0,.25);transition:transform .2s}
 .zap:hover{transform:scale(1.08) rotate(-6deg)}
+.zap.is-oculto{transform:scale(0) rotate(-30deg);pointer-events:none}
+.zap{transition:transform .45s var(--mola)}
 .zap svg{width:32px;fill:var(--palha)}
 
-/* Revelar */
-.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+/* Revelar (orgánico: sube, gira y asienta) */
+.rv{opacity:0;transform:translateY(40px) rotate(-1.4deg) scale(.97);transform-origin:20% 100%;transition:opacity .7s ease,transform 1s var(--mola)}
+.rv:nth-of-type(even){transform:translateY(40px) rotate(1.2deg) scale(.97);transform-origin:80% 100%}
 .rv.is-in{opacity:1;transform:none}
+.rotulos .rotulo.rv{transition-delay:calc(var(--i,0) * 70ms)}
+.rv.rv-fim{transition:opacity .3s,transform .25s;transition-delay:0s!important}
 
 /* ---------- Notebook baixo ---------- */
 @media (max-height:720px) and (min-width:901px){
@@ -389,3 +395,120 @@ section{position:relative}
 .credito{position:relative;z-index:2;font-size:12px;letter-spacing:.02em;text-align:center;opacity:.8;margin:36px auto 0;padding:0 16px}
 .credito a{color:inherit;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .credito a:hover{opacity:.75}
+
+/* =========================================================
+   ESCENA DE ARRANQUE — el bule se llena, sale vapor, sello
+   ========================================================= */
+.intro{display:none}
+html.arranque .intro{display:flex;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;background:var(--barro) url(../img/trazos-barro.svg);color:var(--palha);transition:transform 1s cubic-bezier(.76,0,.24,1)}
+html.arranque:not(.ready){overflow:hidden}
+html.arranque:not(.ready) body{overflow:hidden}
+.intro::after{content:"";position:absolute;left:-2%;right:-2%;top:calc(100% - 1px);height:46px;background:var(--barro);clip-path:polygon(0 0,100% 0,100% 40%,96% 70%,91% 38%,86% 82%,80% 46%,74% 76%,69% 34%,63% 88%,57% 44%,51% 72%,46% 30%,40% 84%,34% 48%,28% 78%,23% 36%,17% 86%,11% 42%,6% 74%,0 40%)}
+html.ready .intro{transform:translateY(calc(-100% - 60px))}
+.intro__cena{display:flex;flex-direction:column;align-items:center;transition:transform .8s cubic-bezier(.6,0,.3,1),opacity .5s}
+html.ready .intro__cena{transform:translateY(-18vh) scale(.92);opacity:0}
+.intro__vapor{width:92px;height:70px;margin-bottom:-10px;overflow:visible}
+.intro__vapor path{fill:none;stroke:var(--palha);stroke-width:5;stroke-linecap:round;stroke-dasharray:110;stroke-dashoffset:110;opacity:0;animation:vapor 1.6s ease-out infinite}
+.intro__vapor path:nth-child(1){animation-delay:.75s}
+.intro__vapor path:nth-child(2){animation-delay:.55s}
+.intro__vapor path:nth-child(3){animation-delay:.95s}
+@keyframes vapor{0%{stroke-dashoffset:110;opacity:0;transform:translateY(10px)}25%{opacity:.9}100%{stroke-dashoffset:0;opacity:0;transform:translateY(-14px)}}
+.intro__bule{width:150px;aspect-ratio:400/560;filter:drop-shadow(4px 0 0 var(--palha)) drop-shadow(-4px 0 0 var(--palha)) drop-shadow(0 4px 0 var(--palha)) drop-shadow(0 -4px 0 var(--palha)) drop-shadow(0 12px 0 rgba(30,10,4,.35));animation:buleIn .7s var(--mola) both}
+@keyframes buleIn{from{transform:translateY(40px) rotate(-10deg) scale(.6);opacity:0}}
+.intro__mask{position:relative;width:100%;height:100%;-webkit-mask:url(../img/bule-mask.svg) center/contain no-repeat;mask:url(../img/bule-mask.svg) center/contain no-repeat;background:var(--rapadura);overflow:hidden}
+.intro__cha{position:absolute;left:-20%;right:-20%;bottom:0;height:100%;background:var(--bule);transform:translateY(100%);animation:enche 1.25s cubic-bezier(.45,.05,.3,1) .35s forwards}
+.intro__cha::before{content:"";position:absolute;left:0;right:0;top:-12px;height:13px;background:radial-gradient(circle at 12px 0,transparent 11px,var(--bule) 12px) 0 0/24px 13px repeat-x;animation:onda .6s linear infinite}
+@keyframes enche{to{transform:translateY(8%)}}
+@keyframes onda{to{background-position:24px 0}}
+.intro__logo{width:240px;height:auto;margin-top:26px;opacity:0;animation:sello .75s var(--mola) 1.15s forwards}
+@keyframes sello{from{opacity:0;transform:scale(2.1) rotate(-14deg)}to{opacity:1;transform:scale(1) rotate(-3deg)}}
+.intro__frase{margin:12px 0 0;font-family:var(--tit);font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:1px;color:var(--rapadura);background:var(--sol);padding:6px 18px 4px;clip-path:var(--rasg);opacity:0;animation:frase .6s var(--mola) 1.5s forwards}
+@keyframes frase{from{opacity:0;transform:translateY(14px) rotate(6deg) scaleX(.4)}to{opacity:1;transform:rotate(2deg)}}
+@media (max-width:900px){.intro__bule{width:108px}.intro__logo{width:180px}}
+
+/* =========================================================
+   ENTRADA DEL HERO — orgánica, con rebote y giros
+   ========================================================= */
+html.arranque:not(.ready) .topo,
+html.arranque:not(.ready) .hero__media,
+html.arranque:not(.ready) .hero__kicker,
+html.arranque:not(.ready) .hero__title,
+html.arranque:not(.ready) .hero__lead,
+html.arranque:not(.ready) .hero__btns .btn,
+html.arranque:not(.ready) .hero__chips .chip,
+html.arranque:not(.ready) .fm-tag,
+html.arranque:not(.ready) .cinta-wrap{opacity:0}
+.hero__title .pal{display:inline-block;white-space:nowrap}
+.hero__title .ch{display:inline-block}
+.hero__media::after{content:"";position:absolute;inset:0;background:var(--palha) url(../img/trazos-palha.svg);transform:translateX(101%);z-index:2;pointer-events:none}
+html.ready .topo{animation:topoIn .9s var(--suave) .55s backwards}
+@keyframes topoIn{from{transform:translateY(-110%)}}
+html.ready .hero__media{animation:mediaIn 1.4s var(--suave) .2s backwards}
+@keyframes mediaIn{from{transform:translateX(7%) rotate(1.8deg) scale(1.06);opacity:.4}}
+html.ready .hero__media::after{animation:papel 1.15s cubic-bezier(.7,0,.2,1) .15s backwards}
+@keyframes papel{from{transform:translateX(0)}}
+html.ready .hero__kicker{animation:kickerIn .9s var(--mola) .4s backwards}
+@keyframes kickerIn{from{opacity:0;transform:translate(-30px,-24px) rotate(-16deg) scale(.55)}}
+html.ready .hero__title{animation:tituloIn .8s var(--mola) .5s backwards}
+@keyframes tituloIn{from{opacity:0;transform:rotate(-7deg) scale(.7,.25)}}
+html.ready .hero__title .ch{animation:letraIn .75s var(--mola) calc(.62s + var(--i) * 32ms) backwards}
+@keyframes letraIn{from{opacity:0;transform:translateY(-75%) rotate(var(--r)) scale(.5)}}
+html.ready .hero__lead{animation:leadIn 1s var(--suave) .95s backwards}
+@keyframes leadIn{from{opacity:0;transform:translateY(22px) rotate(.8deg);filter:blur(6px)}}
+html.ready .hero__btns .btn{animation:btnIn .75s var(--mola) calc(1.05s + var(--i,0) * 110ms) backwards}
+@keyframes btnIn{from{opacity:0;transform:translateY(30px) rotate(var(--r,-8deg)) scale(.6)}}
+html.ready .hero__chips .chip{animation:chipIn .7s var(--mola) calc(1.25s + var(--i,0) * 80ms) backwards}
+@keyframes chipIn{from{opacity:0;transform:translateY(34px) rotate(var(--r,10deg)) scale(.7)}}
+html.ready .fm-tag{animation:tagIn 1.3s var(--mola) 1.45s backwards}
+@keyframes tagIn{from{opacity:0;transform:translateY(-60px) rotate(-38deg)}}
+.fm-tag{transform-origin:20% 0}
+html.ready .cinta-wrap{animation:cintaIn 1s var(--suave) 1.2s backwards}
+@keyframes cintaIn{from{opacity:0;transform:translateX(18%) rotate(2deg)}}
+/* chips menos cuadrados: cada uno con su inclinación */
+.hero__chips .chip:nth-child(1){transform:rotate(-1.5deg)}
+.hero__chips .chip:nth-child(2){transform:rotate(1deg)}
+.hero__chips .chip:nth-child(3){transform:rotate(-.6deg)}
+.hero__chips .chip:nth-child(4){transform:rotate(1.4deg)}
+.chip{border-radius:12px 8px 14px 6px}
+.hero__btns .btn:nth-child(1){--r:-9deg;--i:0}
+.hero__btns .btn:nth-child(2){--r:7deg;--i:1}
+
+/* =========================================================
+   CARRUSELES — arrastre con mouse
+   ========================================================= */
+.is-drag{cursor:grab;user-select:none;-webkit-user-select:none}
+.is-drag img{-webkit-user-drag:none;user-select:none}
+.is-dragging{cursor:grabbing;scroll-snap-type:none!important;scroll-behavior:auto!important}
+.is-dragging *{pointer-events:none}
+.prateleira{scrollbar-width:none;scroll-padding-left:max(32px,calc((100vw - 1240px)/2 + 32px))}
+.prateleira::-webkit-scrollbar{display:none}
+.carril{max-width:1240px;margin:0 auto;padding:0 32px;display:flex;align-items:center;gap:18px}
+.carril__barra{flex:1;height:6px;border-radius:6px;background:rgba(53,113,64,.2);position:relative;overflow:hidden}
+.carril__barra span{position:absolute;top:0;bottom:0;left:0;border-radius:6px;background:var(--mandacaru);width:30%;transition:transform .1s linear}
+.carril__dica{font-size:14px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.carril__dica svg{width:26px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;animation:dica 1.8s ease-in-out infinite}
+@keyframes dica{50%{transform:translateX(6px)}}
+.carril__btn{width:48px;height:48px;border-radius:50%;border:0;background:var(--mandacaru);color:var(--palha);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 0 var(--rapadura);transition:transform .15s,opacity .2s}
+.carril__btn:hover{transform:translateY(-2px)}
+.carril__btn:disabled{opacity:.35;cursor:default;transform:none}
+.carril__btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+
+/* =========================================================
+   HERO MOBILE — exactamente 100svh, foto debajo del header
+   ========================================================= */
+@media (max-width:900px){
+  .hero{height:100vh;height:100svh;min-height:560px;padding:70px 0 26px}
+  .hero__media{flex:1 1 auto;height:auto;min-height:150px;max-height:none}
+  .hero__media img{object-position:50% 40%}
+  .hero__txt{flex:0 0 auto}
+  .hero .fm-tag{display:none}
+  .carril{padding:0 16px}
+  .prateleira{scroll-padding-left:16px}
+  .carril__btn{display:none}
+}
+@media (max-width:900px) and (max-height:700px){
+  .hero__lead{font-size:14px;line-height:1.45}
+  .hero__chips .chip:nth-child(4){display:none}
+  .hero__kicker{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){.intro{display:none!important}.rv{transform:none!important;transition:opacity .4s!important}}

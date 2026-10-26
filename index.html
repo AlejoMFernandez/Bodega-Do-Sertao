@@ -7,13 +7,24 @@
 <meta name="description" content="Restaurante nordestino em Maceió: self-service no almoço, à la carte, tapiocaria, cuscuzes arretados, forró ao vivo no jantar e lojinha de artesanato. Todos os dias.">
 <meta property="og:title" content="Bodega do Sertão · Nordestine-se!">
 <meta property="og:description" content="Comida nordestina, forró ao vivo e lojinha de artesanato em Maceió.">
-<meta property="og:image" content="img/og.jpg">
+<meta property="og:image" content="https://bodega-do-sertao.vercel.app/img/og.jpg">
 <meta name="theme-color" content="#B14F36">
 <link rel="icon" href="img/favicon.png">
 <link rel="preload" href="fonts/londrina-solid-900.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=4">
+<link rel="preload" href="img/logo-sol.png" as="image">
+<script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('arranque');setTimeout(()=>document.documentElement.classList.add('ready'),6000)}</script>
+<link rel="stylesheet" href="css/style.css?v=5">
 </head>
 <body>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro__cena">
+    <svg class="intro__vapor" viewBox="0 0 120 90"><path d="M30 88c-10-14 12-22 0-38s10-26 2-46"/><path d="M60 88c-10-16 14-24 0-42s12-24 2-44"/><path d="M90 88c-10-14 12-22 0-38s10-26 2-46"/></svg>
+    <div class="intro__bule"><div class="intro__mask"><span class="intro__cha"></span></div></div>
+    <img src="img/logo-sol.png" alt="" class="intro__logo" width="240" height="126">
+    <p class="intro__frase">Nordestine-se!</p>
+  </div>
+</div>
 
 <header class="topo" id="topo">
   <a href="#inicio" class="topo__logo" aria-label="Bodega do Sertão — início"><img src="img/logo-rapadura.png" alt="Bodega do Sertão" width="120" height="63"></a>
@@ -34,7 +45,6 @@
 <section class="hero palha" id="inicio">
   <div class="hero__media">
     <img src="img/exterior.webp" alt="Fachada da Bodega do Sertão com o bule gigante pintado de flores" class="kb">
-    <video class="hero__video" data-src="video/hero.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
   </div>
   <div class="hero__txt">
     <p class="rot rot--claro hero__kicker">Comida nordestina, forró<br>e lojinha de artesanato</p>
@@ -77,7 +87,6 @@
       <article class="momento" data-momento="almoco">
         <div class="momento__media">
           <img src="img/buffet.webp" alt="Buffet self-service da Bodega do Sertão" loading="lazy" class="kb">
-          <video data-src="video/almoco.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
           <span class="momento__live">Acontecendo agora</span>
         </div>
         <div class="momento__txt">
@@ -89,7 +98,6 @@
       <article class="momento" data-momento="jantar">
         <div class="momento__media">
           <img src="img/musicos4.webp" alt="Trio de forró tocando no salão durante o jantar" loading="lazy" class="kb">
-          <video data-src="video/jantar.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
           <span class="momento__live">Acontecendo agora</span>
         </div>
         <div class="momento__txt">
@@ -139,7 +147,6 @@
     <div class="bule-window">
       <div class="bule-window__mask">
         <img src="img/musicos1.webp" alt="" loading="lazy">
-        <video data-src="video/ambientes.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
       </div>
     </div>
     <div class="ambientes__txt">
@@ -176,9 +183,9 @@
       <a class="btn btn--sol" href="https://reservation-widget.tagme.com.br/smartlink/643d5ad81951c40055a0e396" target="_blank" rel="noopener">Reservar pro jantar</a>
     </div>
     <div class="polaroids">
-      <figure class="pol pol--1"><img src="img/musicos1.webp" alt="Trio de forró com chapéus de palha" loading="lazy" class="kb"><video data-src="video/forro1.mp4" muted loop playsinline preload="none" aria-hidden="true"></video></figure>
-      <figure class="pol pol--2"><img src="img/musicos2.webp" alt="Sanfona" loading="lazy" class="kb"><video data-src="video/forro2.mp4" muted loop playsinline preload="none" aria-hidden="true"></video></figure>
-      <figure class="pol pol--3"><img src="img/musicos3.webp" alt="Zabumba" loading="lazy" class="kb"><video data-src="video/forro3.mp4" muted loop playsinline preload="none" aria-hidden="true"></video></figure>
+      <figure class="pol pol--1"><img src="img/musicos1.webp" alt="Trio de forró com chapéus de palha" loading="lazy" class="kb"></figure>
+      <figure class="pol pol--2"><img src="img/musicos2.webp" alt="Sanfona" loading="lazy" class="kb"></figure>
+      <figure class="pol pol--3"><img src="img/musicos3.webp" alt="Zabumba" loading="lazy" class="kb"></figure>
     </div>
   </div>
   <div class="wrap">
@@ -203,13 +210,19 @@
       <p class="sec-sub">Barro, madeira, bonecos, casinhas e peças pintadas à mão, numa lojinha de artesanato dentro do salão.</p>
     </div>
   </div>
-  <div class="prateleira" id="prateleira" tabindex="0" aria-label="Fotos da lojinha (role para o lado)">
+  <div class="prateleira" id="prateleira" tabindex="0" aria-label="Fotos da lojinha (arraste para o lado)">
     <figure><img src="img/tienda2.webp" alt="Estante com bonecos e casinhas coloridas de artesanato" loading="lazy"></figure>
     <figure><img src="img/tienda1.webp" alt="Mesa com peças de barro e cerâmica pintada" loading="lazy"></figure>
     <figure><img src="img/tienda3.webp" alt="Boleira pintada com corações e mandacarus de cerâmica" loading="lazy"></figure>
     <figure><img src="img/tienda5.webp" alt="Peças de barro e santos" loading="lazy"></figure>
     <figure><img src="img/tienda4.webp" alt="Esculturas coloridas de madeira" loading="lazy"></figure>
     <figure><img src="img/tienda6.webp" alt="Salão da lojinha com mesas de artesanato" loading="lazy"></figure>
+  </div>
+  <div class="carril" data-carril="prateleira">
+    <span class="carril__dica">Arraste para ver mais <svg viewBox="0 0 26 16" aria-hidden="true"><path d="M2 8h20M16 2l6 6-6 6"/></svg></span>
+    <div class="carril__barra" aria-hidden="true"><span></span></div>
+    <button class="carril__btn" type="button" data-dir="-1" aria-label="Fotos anteriores"><svg viewBox="0 0 18 18"><path d="M11 3L5 9l6 6"/></svg></button>
+    <button class="carril__btn" type="button" data-dir="1" aria-label="Próximas fotos"><svg viewBox="0 0 18 18"><path d="M7 3l6 6-6 6"/></svg></button>
   </div>
 </section>
 
@@ -271,6 +284,6 @@
 </a>
 
 <script src="js/menu.js?v=1"></script>
-<script src="js/main.js?v=2"></script>
+<script src="js/main.js?v=3"></script>
 </body>
 </html>
